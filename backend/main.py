@@ -9,6 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PIL import Image, ImageOps
 
+print("starting main.py")
+
 app = FastAPI()
 
 app.add_middleware(
@@ -80,13 +82,14 @@ def preprocess_image(base64_image: str):
     image = Image.open(io.BytesIO(decoded)).convert("L")
 
     image = ImageOps.autocontrast(image)
-    img = np.array(image)
+    img = np.array(image).astype(np.uint8)
 
-    # If background is white and digit is dark, invert it
     if img.mean() > 127:
         img = 255 - img
 
-    coords = np.argwhere(img > 20)
+    img[img < 20] = 0
+
+    coords = np.argwhere(img > 0)
 
     if coords.size == 0:
         img_resized = np.zeros((28, 28), dtype=np.float32)
@@ -95,13 +98,30 @@ def preprocess_image(base64_image: str):
         y1, x1 = coords.max(axis=0) + 1
         cropped = img[y0:y1, x0:x1]
 
+        h, w = cropped.shape
+        scale = 20.0 / max(h, w)
+        new_h = max(1, int(round(h * scale)))
+        new_w = max(1, int(round(w * scale)))
+
         pil_cropped = Image.fromarray(cropped)
-        pil_cropped.thumbnail((20, 20), Image.Resampling.LANCZOS)
+        pil_resized = pil_cropped.resize((new_w, new_h), Image.Resampling.LANCZOS)
 
         new_img = Image.new("L", (28, 28), 0)
-        paste_x = (28 - pil_cropped.width) // 2
-        paste_y = (28 - pil_cropped.height) // 2
-        new_img.paste(pil_cropped, (paste_x, paste_y))
+        paste_x = (28 - new_w) // 2
+        paste_y = (28 - new_h) // 2
+        new_img.paste(pil_resized, (paste_x, paste_y))
+
+        arr = np.array(new_img).astype(np.float32)
+        ys, xs = np.nonzero(arr > 0)
+        if len(xs) > 0 and len(ys) > 0:
+            cx = xs.mean()
+            cy = ys.mean()
+            shift_x = int(round(13.5 - cx))
+            shift_y = int(round(13.5 - cy))
+
+            shifted = Image.new("L", (28, 28), 0)
+            shifted.paste(new_img, (shift_x, shift_y))
+            new_img = shifted
 
         new_img.save("debug_input.png")
         img_resized = np.array(new_img).astype(np.float32)
