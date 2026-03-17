@@ -96,21 +96,12 @@ function ConfidenceChart({ probabilities, prediction }) {
           return (
             <g key={pct}>
               <line
-                x1={PAD_L}
-                y1={y}
-                x2={W - PAD_R}
-                y2={y}
+                x1={PAD_L} y1={y} x2={W - PAD_R} y2={y}
                 stroke={pct === 0 ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)"}
                 strokeWidth={pct === 0 ? 1 : 0.5}
               />
-              <text
-                x={PAD_L - 5}
-                y={y + 4}
-                textAnchor="end"
-                fontSize="9"
-                fill="rgba(255,255,255,0.35)"
-                fontFamily="'Courier New', monospace"
-              >
+              <text x={PAD_L - 5} y={y + 4} textAnchor="end" fontSize="9"
+                fill="rgba(255,255,255,0.35)" fontFamily="'Courier New', monospace">
                 {pct}%
               </text>
             </g>
@@ -126,99 +117,53 @@ function ConfidenceChart({ probabilities, prediction }) {
           const pct = (val * 100).toFixed(1);
 
           return (
-            <g
-              key={i}
-              style={{ cursor: "pointer" }}
+            <g key={i} style={{ cursor: "pointer" }}
               onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-            >
+              onMouseLeave={() => setHovered(null)}>
               {isWinner && barH > 2 && (
-                <rect
-                  x={x - 2}
-                  y={y - 2}
-                  width={barW + 4}
-                  height={barH + 4}
-                  rx="5"
-                  fill="url(#bar-grad-green)"
-                  opacity="0.25"
-                  filter="url(#bar-glow-strong)"
-                />
+                <rect x={x - 2} y={y - 2} width={barW + 4} height={barH + 4} rx="5"
+                  fill="url(#bar-grad-green)" opacity="0.25" filter="url(#bar-glow-strong)" />
               )}
-
               {barH > 0.5 && (
-                <rect
-                  x={x}
-                  y={y}
-                  width={barW}
-                  height={barH}
-                  rx="5"
-                  ry="5"
+                <rect x={x} y={y} width={barW} height={barH} rx="5" ry="5"
                   fill={isWinner ? "url(#bar-grad-green)" : "url(#bar-grad-blue)"}
                   opacity={isHov ? 1 : isWinner ? 0.92 : 0.78}
-                  filter={isWinner ? "url(#bar-glow)" : isHov ? "url(#bar-glow)" : undefined}
-                />
+                  filter={isWinner ? "url(#bar-glow)" : isHov ? "url(#bar-glow)" : undefined} />
               )}
-
               {isWinner && barH > 2 && (
                 <rect x={x} y={y} width={barW} height={barH} rx="5" fill="url(#shimmer)" opacity="0.6" />
               )}
-
               {barH > 3 && (
-                <rect
-                  x={x + 2}
-                  y={y}
-                  width={barW - 4}
-                  height="2.5"
-                  rx="1.5"
-                  fill={isWinner ? "rgba(180,255,220,0.9)" : "rgba(150,210,255,0.7)"}
-                />
+                <rect x={x + 2} y={y} width={barW - 4} height="2.5" rx="1.5"
+                  fill={isWinner ? "rgba(180,255,220,0.9)" : "rgba(150,210,255,0.7)"} />
               )}
-
               {(isHov || isWinner) && barH > 0 && (
-                <text
-                  x={x + barW / 2}
-                  y={y - 6}
-                  textAnchor="middle"
-                  fontSize="10"
-                  fontWeight="700"
-                  fill={isWinner ? "#00ff8c" : "#7ec8ff"}
-                  fontFamily="'Courier New', monospace"
-                >
+                <text x={x + barW / 2} y={y - 6} textAnchor="middle" fontSize="10" fontWeight="700"
+                  fill={isWinner ? "#00ff8c" : "#7ec8ff"} fontFamily="'Courier New', monospace">
                   {pct}%
                 </text>
               )}
-
-              <text
-                x={x + barW / 2}
-                y={H - PAD_B + 14}
-                textAnchor="middle"
-                fontSize={isWinner ? "13" : "11"}
-                fontWeight={isWinner ? "700" : "400"}
+              <text x={x + barW / 2} y={H - PAD_B + 14} textAnchor="middle"
+                fontSize={isWinner ? "13" : "11"} fontWeight={isWinner ? "700" : "400"}
                 fill={isWinner ? "#00ff8c" : isHov ? "#7ec8ff" : "rgba(255,255,255,0.55)"}
-                fontFamily="'Courier New', monospace"
-              >
+                fontFamily="'Courier New', monospace">
                 {i}
               </text>
             </g>
           );
         })}
 
-        {hovered !== null &&
-          (() => {
-            const val = animated[hovered];
-            if (val < 0.005) return null;
-            const x = PAD_L + hovered * gap + gap / 2;
-            const y = PAD_T + chartH - val * chartH;
-            return (
-              <circle
-                cx={x}
-                cy={y}
-                r="4"
-                fill={hovered === prediction ? "#00ff8c" : "#7ec8ff"}
-                filter="url(#bar-glow)"
-              />
-            );
-          })()}
+        {hovered !== null && (() => {
+          const val = animated[hovered];
+          if (val < 0.005) return null;
+          const x = PAD_L + hovered * gap + gap / 2;
+          const y = PAD_T + chartH - val * chartH;
+          return (
+            <circle cx={x} cy={y} r="4"
+              fill={hovered === prediction ? "#00ff8c" : "#7ec8ff"}
+              filter="url(#bar-glow)" />
+          );
+        })()}
       </svg>
     </div>
   );
@@ -279,12 +224,11 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
   }, [hidden2]);
 
   const outputNodes = useMemo(
-    () =>
-      Array.from({ length: 10 }, (_, i) => ({
-        value: (probabilities[i] ?? 0) / 100,
-        y: TOP + (i / 9) * (BOT - TOP),
-        digit: i,
-      })),
+    () => Array.from({ length: 10 }, (_, i) => ({
+      value: (probabilities[i] ?? 0) / 100,
+      y: TOP + (i / 9) * (BOT - TOP),
+      digit: i,
+    })),
     [probabilities]
   );
 
@@ -316,11 +260,11 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
     const THRESH = 14;
     connections.forEach((c, i) => {
       const { layer } = selectedNode;
-      if (layer === "input" && c.layer === 0 && Math.abs(c.y1 - selectedNode.y) < THRESH) set.add(i);
-      if (layer === "h1" && c.layer === 0 && Math.abs(c.y2 - selectedNode.y) < THRESH) set.add(i);
-      if (layer === "h1" && c.layer === 1 && Math.abs(c.y1 - selectedNode.y) < THRESH) set.add(i);
-      if (layer === "h2" && c.layer === 1 && Math.abs(c.y2 - selectedNode.y) < THRESH) set.add(i);
-      if (layer === "h2" && c.layer === 2 && Math.abs(c.y1 - selectedNode.y) < THRESH) set.add(i);
+      if (layer === "input"  && c.layer === 0 && Math.abs(c.y1 - selectedNode.y) < THRESH) set.add(i);
+      if (layer === "h1"     && c.layer === 0 && Math.abs(c.y2 - selectedNode.y) < THRESH) set.add(i);
+      if (layer === "h1"     && c.layer === 1 && Math.abs(c.y1 - selectedNode.y) < THRESH) set.add(i);
+      if (layer === "h2"     && c.layer === 1 && Math.abs(c.y2 - selectedNode.y) < THRESH) set.add(i);
+      if (layer === "h2"     && c.layer === 2 && Math.abs(c.y1 - selectedNode.y) < THRESH) set.add(i);
       if (layer === "output" && c.layer === 2 && Math.abs(c.y2 - selectedNode.y) < THRESH) set.add(i);
     });
     return set;
@@ -331,10 +275,7 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
       prev?.layer === layer && prev?.y === node.y
         ? null
         : {
-            layer,
-            y: node.y,
-            x: cx,
-            value: node.value,
+            layer, y: node.y, x: cx, value: node.value,
             label: node.digit !== undefined ? `Output digit ${node.digit}` : `${layer} · node ${node.idx}`,
           }
     );
@@ -367,48 +308,27 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
     const finalR = r + (isOutputActive ? 3 : 0) + (isSel ? 2 : 0);
 
     return (
-      <g
-        key={`${layer}-${node.idx ?? node.digit}`}
-        style={{ cursor: "pointer" }}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleNodeClick(layer, node, cx);
-        }}
-      >
+      <g key={`${layer}-${node.idx ?? node.digit}`} style={{ cursor: "pointer" }}
+        onClick={(e) => { e.stopPropagation(); handleNodeClick(layer, node, cx); }}>
         {(isSel || isOutputActive) && (
-          <circle
-            cx={cx}
-            cy={node.y}
-            r={finalR + 2}
-            fill="none"
+          <circle cx={cx} cy={node.y} r={finalR + 2} fill="none"
             stroke={isOutputActive ? "rgba(0,255,140,0.5)" : "rgba(72,163,255,0.4)"}
-            strokeWidth="1.5"
-            className="pulse-ring"
-          />
+            strokeWidth="1.5" className="pulse-ring" />
         )}
-        <circle
-          cx={cx}
-          cy={node.y}
-          r={finalR}
+        <circle cx={cx} cy={node.y} r={finalR}
           fill={`rgba(${color},${op})`}
           stroke={isSel || isOutputActive ? `rgba(${color},0.85)` : "none"}
           strokeWidth="1.5"
-          filter={isOutputActive ? "url(#glow-strong)" : node.value > 0.4 ? "url(#glow-blue)" : undefined}
-        />
+          filter={isOutputActive ? "url(#glow-strong)" : node.value > 0.4 ? "url(#glow-blue)" : undefined} />
         {layer === "output" && (
-          <text
-            x={cx + 18}
-            y={node.y + 4}
-            fontSize={isOutputActive ? "13" : "11"}
-            fontWeight={isOutputActive ? "700" : "400"}
+          <text x={cx + 18} y={node.y + 4}
+            fontSize={isOutputActive ? "13" : "11"} fontWeight={isOutputActive ? "700" : "400"}
             fill={isOutputActive ? "#00ff8c" : "rgba(255,255,255,0.48)"}
-            fontFamily="'Courier New', monospace"
-          >
+            fontFamily="'Courier New', monospace">
             {node.digit}
             {node.value > 0.005 && (
               <tspan fontSize="10" fill={isOutputActive ? "rgba(0,255,140,0.8)" : "rgba(255,255,255,0.28)"}>
-                {" "}
-                {(node.value * 100).toFixed(1)}%
+                {" "}{(node.value * 100).toFixed(1)}%
               </tspan>
             )}
           </text>
@@ -427,32 +347,21 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
           { label: "Output", sub: "10 digits", x: COL.output },
         ].map(({ label, sub, x }) => (
           <span key={label} style={{ left: `${(x / W) * 100}%` }}>
-            {label}
-            <small>{sub}</small>
+            {label}<small>{sub}</small>
           </span>
         ))}
       </div>
 
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="xMidYMid meet"
-        className="net-svg"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet"
+        className="net-svg" onClick={(e) => e.stopPropagation()}>
         <defs>
           <filter id="glow-blue" x="-100%" y="-100%" width="300%" height="300%">
             <feGaussianBlur stdDeviation="3.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
           <filter id="glow-strong" x="-150%" y="-150%" width="400%" height="400%">
             <feGaussianBlur stdDeviation="8" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
           <radialGradient id="bg-grad" cx="50%" cy="50%" r="60%">
             <stop offset="0%" stopColor="#111824" />
@@ -479,16 +388,8 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
         <rect width={W} height={H} fill="url(#bg-grad)" rx="10" />
 
         {[COL.h1 - 122, COL.h2 - 122, COL.output - 122].map((x, i) => (
-          <line
-            key={i}
-            x1={x}
-            y1={TOP - 4}
-            x2={x}
-            y2={BOT + 4}
-            stroke="rgba(255,255,255,0.035)"
-            strokeWidth="1"
-            strokeDasharray="2 8"
-          />
+          <line key={i} x1={x} y1={TOP - 4} x2={x} y2={BOT + 4}
+            stroke="rgba(255,255,255,0.035)" strokeWidth="1" strokeDasharray="2 8" />
         ))}
 
         {connections.map((c, i) => {
@@ -496,89 +397,102 @@ function NetworkVisualization({ inputPixels, hidden1, hidden2, probabilities, pr
           const isOutputActive = c.digit === prediction && c.layer === 2;
           const color = isOutputActive ? "0,255,140" : "72,163,255";
           const baseOp = selectedNode ? (isHl ? 0 : 0.012) : 0.025 + c.strength * 0.15;
-
           return (
             <g key={i}>
-              <line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2} stroke={`rgba(${color},${baseOp})`} strokeWidth="1" />
+              <line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}
+                stroke={`rgba(${color},${baseOp})`} strokeWidth="1" />
               {isHl && (
-                <line
-                  x1={c.x1}
-                  y1={c.y1}
-                  x2={c.x2}
-                  y2={c.y2}
+                <line x1={c.x1} y1={c.y1} x2={c.x2} y2={c.y2}
                   stroke={`rgba(${color},${0.18 + c.strength * 0.55})`}
-                  strokeWidth={isOutputActive ? 2 : 1.5}
-                  className="connection-anim"
-                />
+                  strokeWidth={isOutputActive ? 2 : 1.5} className="connection-anim" />
               )}
             </g>
           );
         })}
 
-        {signalDots.map(
-          (dot) =>
-            dot.opacity > 0.04 && (
-              <circle
-                key={dot.key}
-                cx={dot.cx}
-                cy={dot.cy}
-                r={dot.isActive ? 3 : 2.2}
-                fill={`rgba(${dot.isActive ? "0,255,140" : "110,190,255"},${Math.min(dot.opacity, 0.95)})`}
-                filter="url(#glow-blue)"
-              />
-            )
+        {signalDots.map((dot) =>
+          dot.opacity > 0.04 && (
+            <circle key={dot.key} cx={dot.cx} cy={dot.cy} r={dot.isActive ? 3 : 2.2}
+              fill={`rgba(${dot.isActive ? "0,255,140" : "110,190,255"},${Math.min(dot.opacity, 0.95)})`}
+              filter="url(#glow-blue)" />
+          )
         )}
 
-        {inputNodes.map((n) => renderNode("input", n, COL.input, NR.input, "72,163,255", "0,255,140"))}
-        {h1Nodes.map((n) => renderNode("h1", n, COL.h1, NR.h1, "72,163,255", "0,255,140"))}
-        {h2Nodes.map((n) => renderNode("h2", n, COL.h2, NR.h2, "100,185,255", "0,255,140"))}
-        {outputNodes.map((n) => renderNode("output", n, COL.output, NR.output, "72,163,255", "0,255,140"))}
+        {inputNodes.map((n) => renderNode("input",  n, COL.input,  NR.input,  "72,163,255", "0,255,140"))}
+        {h1Nodes.map((n)    => renderNode("h1",     n, COL.h1,     NR.h1,     "72,163,255", "0,255,140"))}
+        {h2Nodes.map((n)    => renderNode("h2",     n, COL.h2,     NR.h2,     "100,185,255","0,255,140"))}
+        {outputNodes.map((n)=> renderNode("output", n, COL.output, NR.output, "72,163,255", "0,255,140"))}
 
-        {selectedNode &&
-          (() => {
-            const pct = (selectedNode.x / W) * 100;
-            const flip = pct > 72;
-            const tx = flip ? selectedNode.x - 145 : selectedNode.x + 18;
-            const ty = Math.max(12, Math.min(H - 52, selectedNode.y - 22));
-            return (
-              <g>
-                <rect
-                  x={tx - 2}
-                  y={ty - 2}
-                  width={138}
-                  height={46}
-                  rx="7"
-                  fill="rgba(8,14,22,0.93)"
-                  stroke="rgba(72,163,255,0.35)"
-                  strokeWidth="1"
-                />
-                <text
-                  x={tx + 8}
-                  y={ty + 13}
-                  fontSize="10"
-                  fill="rgba(255,255,255,0.45)"
-                  fontFamily="'Courier New', monospace"
-                >
-                  {selectedNode.label}
-                </text>
-                <text
-                  x={tx + 8}
-                  y={ty + 30}
-                  fontSize="13"
-                  fontWeight="700"
-                  fill="#48a3ff"
-                  fontFamily="'Courier New', monospace"
-                >
-                  {(selectedNode.value * 100).toFixed(2)}% activation
-                </text>
-              </g>
-            );
-          })()}
+        {selectedNode && (() => {
+          const pct = (selectedNode.x / W) * 100;
+          const flip = pct > 72;
+          const tx = flip ? selectedNode.x - 145 : selectedNode.x + 18;
+          const ty = Math.max(12, Math.min(H - 52, selectedNode.y - 22));
+          return (
+            <g>
+              <rect x={tx - 2} y={ty - 2} width={138} height={46} rx="7"
+                fill="rgba(8,14,22,0.93)" stroke="rgba(72,163,255,0.35)" strokeWidth="1" />
+              <text x={tx + 8} y={ty + 13} fontSize="10" fill="rgba(255,255,255,0.45)"
+                fontFamily="'Courier New', monospace">{selectedNode.label}</text>
+              <text x={tx + 8} y={ty + 30} fontSize="13" fontWeight="700" fill="#48a3ff"
+                fontFamily="'Courier New', monospace">
+                {(selectedNode.value * 100).toFixed(2)}% activation
+              </text>
+            </g>
+          );
+        })()}
       </svg>
 
       <div className="net-legend">
         Click any node to trace its connections · Moving dots = signal flow · Green = predicted digit
       </div>
+    </div>
+  );
+}
+
+// ─── Debug Image Panel ────────────────────────────────────────────────────────
+function DebugImagePanel({ debugImage }) {
+  if (!debugImage) return null;
+  return (
+    <div style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: "8px",
+      padding: "14px 16px",
+      background: "rgba(255,255,255,0.04)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: "12px",
+      marginTop: "12px",
+    }}>
+      <span style={{
+        fontSize: "11px",
+        fontFamily: "'Courier New', monospace",
+        color: "rgba(255,255,255,0.45)",
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+      }}>
+        What the model sees (28×28)
+      </span>
+      <img
+        src={debugImage}
+        alt="28x28 model input"
+        style={{
+          width: 140,
+          height: 140,
+          imageRendering: "pixelated",
+          border: "1px solid rgba(255,255,255,0.15)",
+          borderRadius: "6px",
+          background: "#000",
+        }}
+      />
+      <span style={{
+        fontSize: "10px",
+        fontFamily: "'Courier New', monospace",
+        color: "rgba(255,255,255,0.25)",
+      }}>
+        Upscaled 5× · nearest-neighbour
+      </span>
     </div>
   );
 }
@@ -592,6 +506,7 @@ function App() {
   const [hidden1, setHidden1] = useState(Array(128).fill(0));
   const [hidden2, setHidden2] = useState(Array(64).fill(0));
   const [inputPixels, setInputPixels] = useState(Array(784).fill(0));
+  const [debugImage, setDebugImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -647,34 +562,31 @@ function App() {
     setHidden1(Array(128).fill(0));
     setHidden2(Array(64).fill(0));
     setInputPixels(Array(784).fill(0));
+    setDebugImage(null);
     setError("");
   };
 
   const predictDigit = async () => {
     if (loading) return;
-
     const canvas = canvasRef.current;
     setLoading(true);
     setError("");
 
     try {
       const response = await axios.post(
-        "https://digit-recognizer-api-916896635867.us-central1.run.app/predict",
+        "https://digit-recognizer-api-609274491837.us-central1.run.app/predict",
         { image: canvas.toDataURL("image/png") },
         { timeout: 20000 }
       );
 
       setPrediction(response.data.prediction);
-      setProbabilities(
-        Array.isArray(response.data.probabilities) ? response.data.probabilities : Array(10).fill(0)
-      );
+      setProbabilities(Array.isArray(response.data.probabilities) ? response.data.probabilities : Array(10).fill(0));
       setHidden1(Array.isArray(response.data.hidden1) ? response.data.hidden1 : Array(128).fill(0));
       setHidden2(Array.isArray(response.data.hidden2) ? response.data.hidden2 : Array(64).fill(0));
       setInputPixels(Array.isArray(response.data.input_pixels) ? response.data.input_pixels : Array(784).fill(0));
+      setDebugImage(response.data.debug_image ?? null);
 
-      if (response.data?.error) {
-        setError(response.data.error);
-      }
+      if (response.data?.error) setError(response.data.error);
     } catch (err) {
       console.error("Prediction error:", err);
       setError("Prediction failed or timed out. Try again.");
@@ -691,34 +603,25 @@ function App() {
         <div className="canvas-panel">
           <canvas
             ref={canvasRef}
-            width={560}
-            height={560}
+            width={560} height={560}
             className="drawing-canvas large"
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onTouchStart={startDrawing}
-            onTouchMove={draw}
-            onTouchEnd={stopDrawing}
+            onMouseDown={startDrawing} onMouseMove={draw}
+            onMouseUp={stopDrawing} onMouseLeave={stopDrawing}
+            onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing}
           />
 
           <div className="buttons">
             <button onClick={predictDigit} disabled={loading}>
               {loading ? "Predicting..." : "Predict"}
             </button>
-            <button onClick={clearCanvas} disabled={loading}>
-              Clear
-            </button>
+            <button onClick={clearCanvas} disabled={loading}>Clear</button>
           </div>
 
           {error && <p className="error-message">{error}</p>}
+          {prediction !== null && <h2>Guess: <span>{prediction}</span></h2>}
 
-          {prediction !== null && (
-            <h2>
-              Guess: <span>{prediction}</span>
-            </h2>
-          )}
+          {/* ── Debug panel sits directly under the canvas ── */}
+          <DebugImagePanel debugImage={debugImage} />
         </div>
 
         <div className="chart-card tall">
@@ -735,12 +638,8 @@ function App() {
       <div className="network-section">
         <h3>Neural Network Activity</h3>
         <NetworkVisualization
-          inputPixels={inputPixels}
-          hidden1={hidden1}
-          hidden2={hidden2}
-          probabilities={probabilities}
-          prediction={prediction}
-        />
+          inputPixels={inputPixels} hidden1={hidden1} hidden2={hidden2}
+          probabilities={probabilities} prediction={prediction} />
       </div>
     </div>
   );
